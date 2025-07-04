@@ -20,6 +20,15 @@ import {
 import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
 import { Textarea } from "./ui/textarea";
+import { chatSession } from "@/scripts";
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "@/config/firebase.config";
 
 interface FormMockInterviewProps {
   initialData: Interview | null;
@@ -38,6 +47,7 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+type QuestionAnswer = { question: string; answer: string };
 
 const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
   const form = useForm<FormData>({
@@ -61,10 +71,99 @@ const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
     ? { title: "Updated..!", description: "Changes saved successfully..." }
     : { title: "Created..!", description: "New Mock Interview created..." };
 
+  const cleanAiResponse = (responseText: string): QuestionAnswer[] => {
+    console.log("[AI] Cleaning raw response:", responseText);
+
+    let cleanText = responseText.trim();
+
+    // Remove ```json, ``` etc.
+    cleanText = cleanText
+      .replace(/^(```json|```|`)/i, "")
+      .replace(/(```|`)$/i, "");
+
+    // Extract text inside first [ ... ]
+    const regex = /\[.*\]/s; // remove ? to be greedy, capture until last ]
+    const jsonArrayMatch = regex.exec(cleanText);
+
+    if (!jsonArrayMatch) {
+      console.error("[AI] No JSON array found!");
+      throw new Error("No JSON array found in response");
+    }
+
+    cleanText = jsonArrayMatch[0];
+    console.log("[AI] Extracted JSON text:", cleanText);
+
+    try {
+      return JSON.parse(cleanText);
+    } catch (error) {
+      console.error("[AI] Failed to parse JSON:", error);
+      console.error("[AI] Problematic JSON text:", cleanText);
+      throw new Error("Invalid JSON format: " + (error as Error).message);
+    }
+  };
+
+  const generateAiResponse = async (data: FormData) => {
+    const prompt = `
+          As an experienced prompt engineer, generate a JSON array containing 5 technical interview questions along with detailed answers based on the following job information. Each object in the array should have the fields "question" and "answer", formatted as follows:
+      
+          [
+            { "question": "<Question text>", "answer": "<Answer text>" },
+            ...
+          ]
+      
+          Job Information:
+          - Job Position: ${data?.position}
+          - Job Description: ${data?.description}
+          - Years of Experience Required: ${data?.experience}
+          - Tech Stacks: ${data?.techStack}
+      
+          The questions should assess skills in ${data?.techStack} development and best practices, problem-solving, and experience handling complex requirements. Please format the output strictly as an array of JSON objects without any additional labels, code blocks, or explanations. Return only the JSON array with questions and answers.
+        `;
+
+    // Just call your helper function
+    console.log("[AI] Sending prompt to Gemini:", prompt);
+
+    const aiResult = await chatSession(prompt);
+    console.log("[AI] Raw Gemini response text:", aiResult);
+
+    // Clean and parse the response
+    const cleanedResponse = cleanAiResponse(aiResult);
+    console.log("[AI] Parsed and cleaned AI response:", cleanedResponse);
+
+    return cleanedResponse;
+  };
+
   const onSubmit = async (data: FormData) => {
     try {
       setLoading(true);
-      console.log(data);
+
+      if (initialData) {
+        if (isValid) {
+          const aiResult = await generateAiResponse(data);
+
+          await updateDoc(doc(db, "interviews", initialData?.id), {
+            questions: aiResult,
+            ...data,
+            updatedAt: serverTimestamp(),
+          }).catch((error) => console.log(error));
+          toast(toastMessage.title, { description: toastMessage.description });
+        }
+      } else {
+        if (isValid) {
+          const aiResult = await generateAiResponse(data);
+
+          await addDoc(collection(db, "interviews"), {
+            ...data,
+            userId,
+            questions: aiResult,
+            createdAt: serverTimestamp(),
+          });
+
+          toast(toastMessage.title, { description: toastMessage.description });
+        }
+      }
+
+      navigate("/generate", { replace: true });
     } catch (error) {
       console.log(error);
       toast.error("Error..", {
@@ -216,7 +315,7 @@ const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
               disabled={isSubmitting || !isValid || loading}
             >
               {loading ? (
-                <Loader className="text-gray-200 animate-spin" />
+                <Loader className="text-black animate-spin" />
               ) : (
                 actions
               )}
