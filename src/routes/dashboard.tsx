@@ -1,4 +1,5 @@
 import Headings from "@/components/headings";
+import InterviewPin from "@/components/interview-pin";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -66,42 +67,46 @@ const Dashboard = () => {
       <Separator className="my-8" />
 
       <div className="md:grid md:grid-cols-3 gap-3 py-4">
-        {loading ? (
-          Array.from({ length: 6 }).map((_, index) => (
-            <Skeleton
-              key={index}
-              className="h-24 md:h-32 rounded-md text-black"
-            />
-          ))
-        ) : interviews.length > 0 ? (
-          interviews.map((interview) => (
-            <p key={interview.id}>{interview.position}</p>
-          ))
-        ) : (
-          <div className="md:col-span-3 w-full flex flex-grow items-center justify-center h-96 flex-col">
-            <img
-              src="/assets/svg/not-found.svg"
-              className="w-44 h-44 object-contain"
-              alt=""
-            />
+        {(() => {
+          if (loading) {
+            return Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                className="h-24 md:h-32 rounded-md text-black"
+              />
+            ));
+          } else if (interviews.length > 0) {
+            return interviews.map((interview) => (
+              <InterviewPin key={interview.id} interview={interview} />
+            ));
+          } else {
+            return (
+              <div className="md:col-span-3 w-full flex flex-grow items-center justify-center h-96 flex-col">
+                <img
+                  src="/assets/svg/not-found.svg"
+                  className="w-44 h-44 object-contain"
+                  alt=""
+                />
 
-            <h2 className="text-lg font-semibold text-muted-foreground">
-              No Data Found
-            </h2>
+                <h2 className="text-lg font-semibold text-muted-foreground">
+                  No Data Found
+                </h2>
 
-            <p className="w-full md:w-96 text-center text-sm text-neutral-400 mt-4">
-              There is no available data to show. Please add some new mock
-              interviews
-            </p>
+                <p className="w-full md:w-96 text-center text-sm text-neutral-400 mt-4">
+                  There is no available data to show. Please add some new mock
+                  interviews
+                </p>
 
-            <Link to={"/generate/create"} className="mt-4">
-              <Button size={"sm"} className="text-black">
-                <Plus className="min-w-5 min-h-5 mr-1 text-black" />
-                Add New
-              </Button>
-            </Link>
-          </div>
-        )}
+                <Link to={"/generate/create"} className="mt-4">
+                  <Button size={"sm"} className="text-black">
+                    <Plus className="min-w-5 min-h-5 mr-1 text-black" />
+                    Add New
+                  </Button>
+                </Link>
+              </div>
+            );
+          }
+        })()}
       </div>
     </>
   );

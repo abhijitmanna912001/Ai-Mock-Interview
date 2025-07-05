@@ -72,8 +72,6 @@ const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
     : { title: "Created..!", description: "New Mock Interview created..." };
 
   const cleanAiResponse = (responseText: string): QuestionAnswer[] => {
-    console.log("[AI] Cleaning raw response:", responseText);
-
     let cleanText = responseText.trim();
 
     // Remove ```json, ``` etc.
@@ -91,8 +89,6 @@ const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
     }
 
     cleanText = jsonArrayMatch[0];
-    console.log("[AI] Extracted JSON text:", cleanText);
-
     try {
       return JSON.parse(cleanText);
     } catch (error) {
@@ -120,16 +116,8 @@ const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
           The questions should assess skills in ${data?.techStack} development and best practices, problem-solving, and experience handling complex requirements. Please format the output strictly as an array of JSON objects without any additional labels, code blocks, or explanations. Return only the JSON array with questions and answers.
         `;
 
-    // Just call your helper function
-    console.log("[AI] Sending prompt to Gemini:", prompt);
-
     const aiResult = await chatSession(prompt);
-    console.log("[AI] Raw Gemini response text:", aiResult);
-
-    // Clean and parse the response
     const cleanedResponse = cleanAiResponse(aiResult);
-    console.log("[AI] Parsed and cleaned AI response:", cleanedResponse);
-
     return cleanedResponse;
   };
 
