@@ -57,8 +57,8 @@ const Dashboard = () => {
           description="Create and start you AI Mock interview"
         />
         <Link to={"/generate/create"}>
-          <Button size={"sm"} className="text-black">
-            <AiOutlinePlus className="text-black" /> Add New
+          <Button size={"sm"} className="text-white">
+            <AiOutlinePlus className="text-white" /> Add New
           </Button>
         </Link>
       </div>

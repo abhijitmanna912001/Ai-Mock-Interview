@@ -60,7 +60,7 @@ const Home = () => {
               distinctio natus, quos voluptatibus magni sapiente.
             </p>
 
-            <Button className="text-black border-black mt-3">
+            <Button className="text-white border-black mt-3">
               Generate <Sparkles />
             </Button>
           </div>
@@ -103,7 +103,7 @@ const Home = () => {
             </p>
 
             <Link to={"/generate"} className="w-full">
-              <Button className="w-3/4 text-black border-black">
+              <Button className="w-3/4 text-white border-black">
                 Generate <Sparkles className="ml-2" />
               </Button>
             </Link>

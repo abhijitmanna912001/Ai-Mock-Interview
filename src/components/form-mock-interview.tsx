@@ -300,6 +300,7 @@ const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
 
           <div className="w-full flex items-center justify-end gap-6">
             <Button
+              className="text-white hover:text-white"
               type="reset"
               size={"sm"}
               variant={"outline"}
@@ -308,17 +309,13 @@ const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
               Reset
             </Button>
             <Button
-              className="text-black"
+              className="text-white hover:text-white"
               type="submit"
               variant={"outline"}
               size={"sm"}
               disabled={isSubmitting || !isValid || loading}
             >
-              {loading ? (
-                <Loader className="text-black animate-spin" />
-              ) : (
-                actions
-              )}
+              {loading ? <Loader className="animate-spin" /> : actions}
             </Button>
           </div>
         </form>

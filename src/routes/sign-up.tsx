@@ -1,7 +1,11 @@
 import { SignUp } from "@clerk/clerk-react";
 
 const SignUpPage = () => {
-  return <SignUp path="/signup" />;
+  return (
+    <div>
+      <SignUp path="/signup" />;
+    </div>
+  );
 };
 
 export default SignUpPage;
