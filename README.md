@@ -35,7 +35,7 @@
 1️⃣ Go to the [Live Demo](https://ai-mock-interview-f2f93.web.app/)  
 2️⃣ Click **Get Started**  
 3️⃣ Log in or sign up quickly with Clerk  
-4️⃣ Click **Start an Interview** to begin practicing with AI-powered questions and feedback
+4️⃣ Click **Take an Interview** to begin practicing with AI-powered questions and feedback
 
 ---
 
