@@ -2,9 +2,7 @@
 
 > 🚀 Live Demo: [https://ai-mock-interview-f2f93.web.app/](https://ai-mock-interview-f2f93.web.app/)
 
-💻 Feel free to explore, star ⭐ the repo, and fork it! Your support helps us create more awesome content.
-
----
+💻 Feel free to explore, star ⭐ the repo, and fork it!
 
 ## ✨ Tech Stack
 
