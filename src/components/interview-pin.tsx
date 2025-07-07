@@ -1,12 +1,10 @@
-import type { Interview } from "@/types";
-import { useAuth } from "@clerk/clerk-react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { Card, CardDescription, CardFooter, CardTitle } from "./ui/card";
-import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
+import type { Interview } from "@/types";
+import { Eye, Newspaper, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router";
 import ToolTipButton from "./tooltip-button";
-import { Eye, Newspaper, Pencil, Sparkles } from "lucide-react";
+import { Badge } from "./ui/badge";
+import { Card, CardDescription, CardFooter, CardTitle } from "./ui/card";
 
 interface InterviewPinProps {
   interview: Interview;
@@ -15,9 +13,6 @@ interface InterviewPinProps {
 
 const InterviewPin = ({ interview, onMockPage = false }: InterviewPinProps) => {
   const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(false);
-  const { userId } = useAuth();
 
   return (
     <Card className="p-4 rounded-md shadow-none hover:shadow-md shadow-gray-100 cursor-pointer transition-all space-y-4">
@@ -51,7 +46,7 @@ const InterviewPin = ({ interview, onMockPage = false }: InterviewPinProps) => {
           )}`}
         </p>
       </CardFooter>
-      
+
       {!onMockPage && (
         <div className="flex items-center justify-center">
           <ToolTipButton
